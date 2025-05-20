@@ -1,0 +1,40 @@
+from organization import Organization
+
+
+def main():
+    org = Organization()
+
+    while True:
+        command = input("Enter command: ").strip().split()
+        if not command:
+            continue
+
+        action = command[0].lower()
+        if action == "welcome":
+            print("WELCOME!\nSubmitter : Majd AbdElRazek 318583283")
+        elif action == "add_employee":
+            if len(command) < 5:
+                print("Error: Missing arguments!")
+                continue
+
+            name, department, age, emp_type = command[1:5]
+            manager_id = int(command[5]) if len(command) > 5 else None
+            org.add_employee(name, department, int(age), emp_type, manager_id)
+        elif action == "delete_employee":
+            org.delete_employee(int(command[1]))
+        elif action == "print_employee":
+            org.print_employee(int(command[1]))
+        elif action == "assign_manager":
+            org.assign_manager(int(command[1]), int(command[2]))
+        elif action == "print_org":
+            org.print_org()
+        elif action == "print_dep":
+            org.print_dep()
+        elif action == "quit":
+            break
+        else:
+            print("Error: Unknown command!")
+
+
+if __name__ == "__main__":
+    main()
