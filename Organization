@@ -1,0 +1,87 @@
+from employee import Employee  # FIX: Import Employee class
+
+
+class Organization:
+    def __init__(self):
+        self.employees = {}
+        self.ceo = None
+
+    def add_employee(self, name, department, age, emp_type, manager_id=None):
+        if manager_id and manager_id not in self.employees:
+            print("Error: Manager does not exist.")
+            return
+
+        new_employee = Employee(name, department, age, emp_type, manager_id)
+        self.employees[new_employee.id] = new_employee
+
+        if manager_id:
+            self.employees[manager_id].add_subordinate(new_employee)
+        else:
+            if self.ceo:
+                print("Error: CEO already exists!")
+                return
+            self.ceo = new_employee
+
+        print(f"Employee added with ID: {new_employee.id}")
+
+    def delete_employee(self, emp_id):
+        if emp_id not in self.employees:
+            print("Error: Employee does not exist.")
+            return
+
+        employee = self.employees[emp_id]
+        if employee.subordinates:
+            print("Error: Cannot delete an employee with subordinates.")
+            return
+
+        if employee.manager_id:
+            self.employees[employee.manager_id].remove_subordinate(employee)
+
+        del self.employees[emp_id]
+        print("Employee deleted successfully.")
+
+    def print_employee(self, emp_id):
+        if emp_id not in self.employees:
+            print("Error: Employee does not exist.")
+            return
+        print(self.employees[emp_id])
+
+    def assign_manager(self, emp_id, manager_id):
+        if emp_id not in self.employees or manager_id not in self.employees:
+            print("Error: Employee or Manager does not exist.")
+            return
+
+        employee = self.employees[emp_id]
+        old_manager = self.employees.get(employee.manager_id)
+        new_manager = self.employees[manager_id]
+
+        if old_manager:
+            old_manager.remove_subordinate(employee)
+
+        employee.manager_id = manager_id
+        new_manager.add_subordinate(employee)
+        print("Manager reassigned successfully.")
+
+    def print_org(self):
+        if not self.ceo:
+            print("Error: No CEO found!")
+            return
+        self._print_tree(self.ceo, 0)
+
+    def _print_tree(self, employee, level):
+        print("|" + "---" * level, employee)
+        for sub in employee.subordinates:
+            self._print_tree(sub, level + 1)
+
+    def print_dep(self):
+        dep_data = {}
+        for emp in self.employees.values():
+            if emp.department not in dep_data:
+                dep_data[emp.department] = []
+            dep_data[emp.department].append(emp)
+
+        print(f"Total number of employees = {len(self.employees)}")
+        for dep, employees in dep_data.items():
+            print(f"{dep} | number of employees = {len(employees)}")
+            for emp in employees:
+                print(f"   |--- {emp}")
