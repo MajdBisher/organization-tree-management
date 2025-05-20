@@ -1,0 +1,21 @@
+class Employee:
+    _id_counter = 1
+
+    def __init__(self, name, department, age, emp_type, manager_id=None):
+        self.id = Employee._id_counter
+        Employee._id_counter += 1
+        self.name = name
+        self.department = department
+        self.age = age
+        self.type = emp_type
+        self.manager_id = manager_id
+        self.subordinates = []
+
+    def __str__(self):
+        return f"{self.type} | {self.department} | ID: {self.id} | {self.name} - {self.age}"
+
+    def add_subordinate(self, employee):
+        self.subordinates.append(employee)
+
+    def remove_subordinate(self, employee):
+        self.subordinates.remove(employee)
